@@ -34,7 +34,7 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 
 }
-func (l *Lexer) NextToken() tokens.Token{ 
+func (l *Lexer) NextToken() tokens.Token {
 	var tok tokens.Token
 
 	switch l.ch {
@@ -52,12 +52,20 @@ func (l *Lexer) NextToken() tokens.Token{
 	case '+':
 		tok = newToken(tokens.PLUS, l.ch)
 	case '{':
-		tok = newToken(tokens.LBRACE,l.ch)
+		tok = newToken(tokens.LBRACE, l.ch)
 	case '}':
-		tok = newToken(tokens.RBRACE,l.ch)
+		tok = newToken(tokens.RBRACE, l.ch)
 	case 0:
 		tok.Literal = ""
 		tok.Type = tokens.EOF
+
+	default:
+		if isLetter(l.ch) {
+			tok.Literal = l.readIdentifier()
+			return tok
+		} else {
+			tok = newToken(tokens.ILLEGAL, l.ch)
+		}
 
 	}
 
@@ -67,6 +75,20 @@ func (l *Lexer) NextToken() tokens.Token{
 
 }
 
-func newToken(tokenType tokens.TokenType,ch byte) tokens.Token {
-	return tokens.Token{Type: tokenType,Literal: string(ch)}
+func newToken(tokenType tokens.TokenType, ch byte) tokens.Token {
+	return tokens.Token{Type: tokenType, Literal: string(ch)}
+}
+
+func isLetter(ch byte) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
+func (l *Lexer) readIdentifier() string {
+	position := l.position
+
+	for isLetter(l.ch) {
+		l.readChar()
+	}
+
+	return l.input[position:l.position]
 }
