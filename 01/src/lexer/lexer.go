@@ -37,6 +37,8 @@ func (l *Lexer) readChar() {
 func (l *Lexer) NextToken() tokens.Token {
 	var tok tokens.Token
 
+	l.skipWhitespace()
+
 	switch l.ch {
 
 	case '=':
@@ -62,6 +64,7 @@ func (l *Lexer) NextToken() tokens.Token {
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
+			tok.Type = tokens.LookUpIdent(tok.Literal)
 			return tok
 		} else {
 			tok = newToken(tokens.ILLEGAL, l.ch)
@@ -83,6 +86,12 @@ func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
+func (l *Lexer) skipWhitespace() {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+		l.readChar()
+	}
+
+}
 func (l *Lexer) readIdentifier() string {
 	position := l.position
 

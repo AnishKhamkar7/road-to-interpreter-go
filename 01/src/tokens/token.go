@@ -9,11 +9,11 @@ type Token struct {
 }
 
 const (
-	ILLEGAL   = "Illegal"
-	EOF       = "EOF"
-	ASSIGN    = "="
-	PLUS      = "+"
-	IDENT     = "IDENT"
+	ILLEGAL = "Illegal"
+	EOF     = "EOF"
+	ASSIGN  = "="
+	PLUS    = "+"
+	IDENT   = "IDENT"
 	//identifier
 	INT       = "INT"
 	COMMA     = ","
@@ -25,3 +25,16 @@ const (
 	FUNCTION  = "FUNCTION"
 	LET       = "LET"
 )
+
+var keywords = map[string]TokenType{
+	"fn":  FUNCTION,
+	"let": LET,
+}
+
+func LookUpIdent(ident string) TokenType {
+	if tok, ok := keywords[ident]; ok {
+		return tok
+	}
+	return IDENT
+
+}
