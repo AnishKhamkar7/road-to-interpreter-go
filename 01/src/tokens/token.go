@@ -24,6 +24,11 @@ const (
 	RBRACE    = "{"
 	FUNCTION  = "FUNCTION"
 	LET       = "LET"
+	ASTRIK    = "*"
+	BANG      = "!"
+	SLASH     = "/"
+	LT        = "<"
+	RT        = ">"
 )
 
 var keywords = map[string]TokenType{
