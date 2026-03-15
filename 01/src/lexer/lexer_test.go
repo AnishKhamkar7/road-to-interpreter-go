@@ -80,7 +80,7 @@ func TestNextToken2(t *testing.T) {
 		{tokens.RBRACE, "}"},
 		{tokens.SEMICOLON, ";"},
 		{tokens.LET, "let"},
-		{tokens.IDENT, "result"},
+		{tokens.IDENT, "res"},
 		{tokens.ASSIGN, "="},
 		{tokens.IDENT, "add"},
 		{tokens.LPAREN, "("},
@@ -105,4 +105,26 @@ func TestNextToken2(t *testing.T) {
 			t.Fatalf("tests[%d] - literal wrong. expected=%q,got=%q", i, tt.expectedLiteral, tok.Literal)
 		}
 	}
+}
+
+
+func TestNextToken3(t *testing.T){
+	input := `let five = 5;
+	let ten = 10;
+	let add = fn(x,y){
+	x + y	
+	};
+	let result = add(five,ten);
+	!-/*5;
+	5 < 10 >5;
+	`
+
+	tests := []struct {
+		expectedType    tokens.TokenType
+		expectedLiteral string
+	}{
+
+	}
+	
+
 }
