@@ -34,6 +34,7 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 
 }
+
 func (l *Lexer) NextToken() tokens.Token {
 	var tok tokens.Token
 
@@ -44,20 +45,32 @@ func (l *Lexer) NextToken() tokens.Token {
 
 	case '=':
 		tok = newToken(tokens.ASSIGN, l.ch)
-	case ';':
-		tok = newToken(tokens.SEMICOLON, l.ch)
 	case '(':
 		tok = newToken(tokens.LPAREN, l.ch)
 	case ')':
 		tok = newToken(tokens.RPAREN, l.ch)
-	case ',':
-		tok = newToken(tokens.COMMA, l.ch)
 	case '+':
 		tok = newToken(tokens.PLUS, l.ch)
 	case '{':
 		tok = newToken(tokens.LBRACE, l.ch)
 	case '}':
 		tok = newToken(tokens.RBRACE, l.ch)
+	case '-':
+		tok = newToken(tokens.MINUS, l.ch)
+	case '!':
+		tok = newToken(tokens.BANG, l.ch)
+	case '/':
+		tok = newToken(tokens.SLASH, l.ch)
+	case '*':
+		tok = newToken(tokens.ASTERISK, l.ch)
+	case '<':
+		tok = newToken(tokens.LT, l.ch)
+	case '>':
+		tok = newToken(tokens.GT, l.ch)
+	case ';':
+		tok = newToken(tokens.SEMICOLON, l.ch)
+	case ',':
+		tok = newToken(tokens.COMMA, l.ch)
 	case 0:
 		tok.Literal = ""
 		tok.Type = tokens.EOF
