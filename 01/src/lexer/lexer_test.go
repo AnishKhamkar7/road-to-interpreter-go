@@ -114,8 +114,7 @@ func TestNextToken3(t *testing.T) {
 	};
 	let result = add(five,ten);
 	!-/*5;
-	5 < 10 > 5;
-	`
+	5 < 10 > 5;`
 
 	tests := []struct {
 		expectedType    tokens.TokenType
@@ -173,8 +172,6 @@ func TestNextToken3(t *testing.T) {
 		{tokens.GT, ">"},
 		{tokens.INT, "5"},
 		{tokens.SEMICOLON, ";"},
-
-		{tokens.EOF, ""},
 	}
 
 	l := New(input)
@@ -197,7 +194,7 @@ func TestNextToken3(t *testing.T) {
 func TestNextToken4(t *testing.T) {
 	input := `let five = 5;
 	let ten = 10;
-	let add = fun(x,y){
+	let add = fn(x,y){
 		x + y;
 	};
 
@@ -230,7 +227,7 @@ func TestNextToken4(t *testing.T) {
 		{tokens.LET, "let"},
 		{tokens.IDENT, "add"},
 		{tokens.ASSIGN, "="},
-		{tokens.FUNCTION, "fun"}, // use FUNCTION if "fun" is keyword in your lexer
+		{tokens.FUNCTION, "fn"},
 		{tokens.LPAREN, "("},
 		{tokens.IDENT, "x"},
 		{tokens.COMMA, ","},
@@ -269,7 +266,7 @@ func TestNextToken4(t *testing.T) {
 		{tokens.INT, "5"},
 		{tokens.SEMICOLON, ";"},
 
-		// {tokens.IF, "if"},
+		{tokens.IF, "if"},
 		{tokens.LPAREN, "("},
 		{tokens.INT, "5"},
 		{tokens.LT, "<"},
@@ -277,16 +274,16 @@ func TestNextToken4(t *testing.T) {
 		{tokens.RPAREN, ")"},
 		{tokens.LBRACE, "{"},
 
-		// {tokens.RETURN, "return"},
-		// {tokens.TRUE, "true"},
+		{tokens.RETURN, "return"},
+		{tokens.TRUE, "true"},
 		{tokens.SEMICOLON, ";"},
 
 		{tokens.RBRACE, "}"},
-		// {tokens.ELSE, "else"},
+		{tokens.ELSE, "else"},
 		{tokens.LBRACE, "{"},
 
-		// {tokens.RETURN, "return"},
-		// {tokens.FALSE, "false"},
+		{tokens.RETURN, "return"},
+		{tokens.FALSE, "false"},
 		{tokens.SEMICOLON, ";"},
 
 		{tokens.RBRACE, "}"},
