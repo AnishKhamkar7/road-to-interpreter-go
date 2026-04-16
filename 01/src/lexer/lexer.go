@@ -38,7 +38,6 @@ func (l *Lexer) readChar() {
 func (l *Lexer) NextToken() tokens.Token {
 	var tok tokens.Token
 
-	println("->", string(l.input[l.position]))
 	l.skipWhitespace()
 
 	switch l.ch {
