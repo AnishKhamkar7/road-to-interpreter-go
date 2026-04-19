@@ -32,6 +32,7 @@ func (p *Program) TokenLiteral() string {
 type LetStatement struct {
 	Token tokens.Token
 	Value Expression
+	Name  *Identifier
 }
 
 func (Is *LetStatement) statementNode() {
@@ -42,12 +43,13 @@ func (Is *LetStatement) TokenLiteral() string {
 	return Is.Token.Literal
 }
 
-type identifier struct {
+type Identifier struct {
 	Token tokens.Token
+	Value string
 }
 
-func (i *identifier) expressionNode() {}
+func (i *Identifier) expressionNode() {}
 
-func (i *identifier) TokenLiteral() string {
+func (i *Identifier) TokenLiteral() string {
 	return i.Token.Literal
 }
