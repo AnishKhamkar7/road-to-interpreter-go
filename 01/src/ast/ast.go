@@ -1,9 +1,13 @@
 package ast
 
-import "go-int/src/tokens"
+import (
+	"bytes"
+	"go-int/src/tokens"
+)
 
 type Node interface {
 	TokenLiteral() string
+	String()
 }
 
 type Statement interface {
@@ -29,16 +33,41 @@ func (p *Program) TokenLiteral() string {
 	}
 }
 
+func (p *Program) String() string {
+	var out bytes.Buffer
+
+	for _, i := range p.Statements {
+		out.WriteString(i.String())
+	}
+	return out.String()
+}
+
 type LetStatement struct {
 	Token tokens.Token
 	Value Expression
 	Name  *Identifier
 }
 
-func (Is *LetStatement) statementNode() {}
+func (ls *LetStatement) statementNode() {}
 
-func (Is *LetStatement) TokenLiteral() string {
-	return Is.Token.Literal
+func (ls *LetStatement) TokenLiteral() string {
+	return ls.Token.Literal
+}
+
+func (ls *LetStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.Name.String())
+	out.WriteString("=")
+
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
 }
 
 type Identifier struct {
@@ -46,9 +75,38 @@ type Identifier struct {
 	Value string
 }
 
+func (i *Identifier) expressionNode() {}
+
+func (i *Identifier) TokenLiteral() string {
+	return i.Token.Literal
+}
+
+func (i *Identifier) String() string {
+	return i.Value
+}
+
 type ReturnStatement struct {
 	Token       tokens.Token
 	ReturnValue Expression
+}
+
+func (rs *ReturnStatement) statementNode() {}
+
+func (rs *ReturnStatement) TokenLiteral() string {
+	return rs.Token.Literal
+}
+
+func (rs *ReturnStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(rs.TokenLiteral() + " ")
+	if rs.ReturnValue != nil {
+		out.WriteString(rs.ReturnValue.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
 }
 
 type ExpressionStatement struct {
@@ -63,14 +121,11 @@ func (es *ExpressionStatement) TokenLiteral() string {
 func (es *ExpressionStatement) statementNode() {
 }
 
-func (rs *ReturnStatement) statementNode() {}
+func (es *ExpressionStatement) String() string {
+	if es.Expression != nil {
+		return es.Expression.String()
+	}
 
-func (rs *ReturnStatement) TokenLiteral() string {
-	return rs.Token.Literal
-}
+	return ""
 
-func (i *Identifier) expressionNode() {}
-
-func (i *Identifier) TokenLiteral() string {
-	return i.Token.Literal
 }
