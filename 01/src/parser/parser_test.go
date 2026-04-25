@@ -1,5 +1,4 @@
 package parser
-
 import (
 	"go-int/src/ast"
 	"go-int/src/lexer"
@@ -47,6 +46,7 @@ func TestLetStatements(t *testing.T) {
 	}
 
 }
+
 
 func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 
@@ -112,17 +112,59 @@ func TestReturnStatement(t *testing.T) {
 		t.Fatalf("Program statements Does not consists 3 statements, Got = %d", len(program.Statements))
 	}
 
-	for _, stmt:= range program.Statements{
-		returnStmt,ok:= stmt.(*ast.ReturnStatement)
+	for _, stmt := range program.Statements {
+		returnStmt, ok := stmt.(*ast.ReturnStatement)
 
 		if !ok {
-			t.Errorf("stmt not *ast.returnStatement, got=%T",stmt)
+			t.Errorf("stmt not *ast.returnStatement, got=%T", stmt)
 			continue
 		}
 
 		if returnStmt.TokenLiteral() != "return" {
-			t.Errorf("returnStmt.TokenLiteral not 'return', got %q",returnStmt.TokenLiteral())
+			t.Errorf("returnStmt.TokenLiteral not 'return', got %q", returnStmt.TokenLiteral())
 		}
+	}
+
+}
+
+func TestIdentifyExpression(t *testing.T) {
+	input := "foobar;"
+
+	l := lexer.New(input)
+
+	p := New(l)
+
+	t.Logf("ParseNEw = %v", p)
+
+	parser := p.ParseProgram()
+
+	t.Logf("Parser Statement = %s", parser.String())
+
+	checkParserErrors(t, p)
+
+	if len(parser.Statements) != 1 {
+		t.Fatalf("len(Parser.statement) is not enough, got= %d", len(parser.Statements))
+
+	}
+
+	stmt, ok := parser.Statements[0].(*ast.ExpressionStatement)
+
+	if !ok {
+		t.Fatalf("program.Statement[0] is not an ExpressionStatement, got= %T", parser.Statements[0])
+	}
+
+	ident, ok := stmt.Expression.(*ast.Identifier)
+
+	if !ok {
+		t.Fatalf("stmt.Expression is not an Ast.Identifier, got= %T", stmt.Expression)
+	}
+
+	if ident.TokenLiteral() != "foobar" {
+		t.Fatalf("ident.TokenLiteral() is not foobar, got=%s", ident.TokenLiteral())
+	}
+
+	if ident.Value != "foobar" {
+		t.Fatalf("ident.Value is not foobar,got= %s", ident.Value)
 	}
 
 }

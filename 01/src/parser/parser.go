@@ -7,11 +7,26 @@ import (
 	"go-int/src/tokens"
 )
 
+type (
+	preFixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
+)
+
 type Parser struct {
-	l         *lexer.Lexer
-	curToken  tokens.Token
-	peekToken tokens.Token
-	errors    []string
+	l              *lexer.Lexer
+	curToken       tokens.Token
+	peekToken      tokens.Token
+	errors         []string
+	preFixParseFns map[tokens.TokenType]preFixParseFn
+	infixParseFns  map[tokens.TokenType]infixParseFn
+}
+
+func (p *Parser) registerPrefix(tn tokens.TokenType, fn preFixParseFn) {
+	p.preFixParseFns[tn] = fn
+}
+
+func (p *Parser) registerInfix(tn tokens.TokenType, fn infixParseFn) {
+	p.infixParseFns[tn] = fn
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -56,8 +71,21 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseReturnStatement()
 
 	default:
-		return nil
+		return p.parseExpressionStatement()
+
 	}
+}
+
+func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	stmt := &ast.ExpressionStatement{Token: p.curToken}
+
+	stmt.Expression = p.parseEexpression(LOWEST)
+
+	if p.peekTokenIs(tokens.SEMICOLON) {
+		p.NextToken()
+	}
+
+	return stmt
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
