@@ -7,7 +7,7 @@ import (
 
 type Node interface {
 	TokenLiteral() string
-	String()
+	String() string
 }
 
 type Statement interface {
@@ -44,8 +44,8 @@ func (p *Program) String() string {
 
 type LetStatement struct {
 	Token tokens.Token
-	Value Expression
 	Name  *Identifier
+	Value Expression
 }
 
 func (ls *LetStatement) statementNode() {}
