@@ -12,6 +12,17 @@ type (
 	infixParseFn  func(ast.Expression) ast.Expression
 )
 
+const (
+	_int = iota
+	LOWEST
+	EQUALS
+	LESSGREATER
+	SUM
+	PRODUCT
+	PREFIX
+	CALL
+)
+
 type Parser struct {
 	l              *lexer.Lexer
 	curToken       tokens.Token
@@ -32,8 +43,16 @@ func (p *Parser) registerInfix(tn tokens.TokenType, fn infixParseFn) {
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
 
+	p.preFixParseFns = make(map[tokens.TokenType]preFixParseFn)
+	p.registerPrefix(tokens.IDENT, p.parseIdentifier)
 	p.NextToken()
+	p.NextToken()
+
 	return p
+}
+
+func (p *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 }
 
 func (p *Parser) NextToken() {
@@ -79,13 +98,25 @@ func (p *Parser) parseStatement() ast.Statement {
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 	stmt := &ast.ExpressionStatement{Token: p.curToken}
 
-	stmt.Expression = p.parseEexpression(LOWEST)
+	stmt.Expression = p.parseExpression(LOWEST)
 
 	if p.peekTokenIs(tokens.SEMICOLON) {
 		p.NextToken()
 	}
 
 	return stmt
+}
+
+func (p *Parser) parseExpression(precedence int) ast.Expression {
+	prefix := p.preFixParseFns[p.curToken.Type]
+
+	if prefix == nil {
+		return nil
+	}
+	leftExp := prefix()
+
+	return leftExp
+
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {

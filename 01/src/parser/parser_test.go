@@ -1,4 +1,5 @@
 package parser
+
 import (
 	"go-int/src/ast"
 	"go-int/src/lexer"
@@ -46,7 +47,6 @@ func TestLetStatements(t *testing.T) {
 	}
 
 }
-
 
 func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 
@@ -138,7 +138,7 @@ func TestIdentifyExpression(t *testing.T) {
 
 	parser := p.ParseProgram()
 
-	t.Logf("Parser Statement = %s", parser.String())
+	t.Logf("Parser Statement = %s", parser.Statements[0].String())
 
 	checkParserErrors(t, p)
 
