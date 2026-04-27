@@ -47,6 +47,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.preFixParseFns = make(map[tokens.TokenType]preFixParseFn)
 	p.registerPrefix(tokens.IDENT, p.parseIdentifier)
 	p.registerPrefix(tokens.INT, p.parseIntegerLiteral)
+	p.registerPrefix(tokens.BANG, p.parsePrefix)
+	p.registerPrefix(tokens.MINUS, p.parsePrefix)
 	p.NextToken()
 	p.NextToken()
 
@@ -71,6 +73,15 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	lit.Value = value
 
 	return lit
+}
+
+func (p *Parser) parsePrefix() ast.Expression {
+	exp := &ast.PrefixExpression{Operator: p.curToken.Literal, Token: p.curToken}
+
+	p.NextToken()
+
+	exp.Right = p.parseExpression(PREFIX)
+	return exp
 
 }
 
@@ -125,11 +136,18 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 	return stmt
 }
 
+func (p *Parser) noPrefixParseFnError(t tokens.Token) {
+
+	msg := fmt.Sprintf("no Prefix parse functions for %s found", t)
+	p.errors = append(p.errors, msg)
+
+}
+
 func (p *Parser) parseExpression(precedence int) ast.Expression {
 	prefix := p.preFixParseFns[p.curToken.Type]
 
 	if prefix == nil {
-		return nil
+		p.noPrefixParseFnError(p.curToken)
 	}
 
 	leftExp := prefix()

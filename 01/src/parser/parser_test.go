@@ -213,7 +213,7 @@ func TestParsingPrefixExpression(t *testing.T) {
 		operator string
 		intValue int64
 	}{
-		{"!5", "!", 15},
+		{"!5", "!", 5},
 		{"-15", "-", 15},
 	}
 
